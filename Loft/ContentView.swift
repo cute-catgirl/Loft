@@ -1,41 +1,76 @@
-//
-//  ContentView.swift
-//  Loft
-//
-//  Created by Mae on 11/11/24.
-//
-
 import SwiftUI
 import Foundation
 
 struct ContentView: View {
     @StateObject private var viewModel = StatusViewModel()
     @State private var settingsShown: Bool = false
+    @State private var newStatus: String = ""
     
     var body: some View {
         NavigationView {
-            List(viewModel.statuses) { status in
-                StatusView(status: status)
-            }
-            .onAppear {
-                viewModel.fetchStatuses()
-            }
-            .navigationTitle("Loft")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Settings", systemImage: "gear") {
-                        settingsShown.toggle()
+            ZStack {
+                VStack {
+                    List {
+                        ForEach(viewModel.statuses) { status in
+                            StatusView(status: status)
+                        }
                     }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Refresh", systemImage: "arrow.clockwise") {
+                    .listStyle(PlainListStyle())
+                    .onAppear {
                         viewModel.fetchStatuses()
                     }
+                    
+                    HStack(spacing: 12) {
+                        TextField("Update status", text: $newStatus)
+                            .padding(12)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(20)
+                        
+                        Button(action: {
+                            if !newStatus.isEmpty {
+                                viewModel.postStatus(
+                                    status: newStatus,
+                                    username: AccountManager.shared.username,
+                                    password: AccountManager.shared.password,
+                                    instance: AccountManager.shared.instances[AccountManager.shared.selectedInstance]
+                                )
+                                newStatus = ""
+                            }
+                        }) {
+                            Image(systemName: "arrow.up.circle.fill")
+                                .font(.system(size: 32))
+                                .foregroundColor(!newStatus.isEmpty ? SettingsManager.shared.colorAccent : Color(.systemGray4))
+                        }
+                        .disabled(newStatus.isEmpty)
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+                    .background(Color(.systemBackground))
+                    .overlay(
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundColor(Color(.systemGray5)),
+                        alignment: .top
+                    )
                 }
-            }
-            .sheet(isPresented: $settingsShown) {
-                SettingsView()
+                
+                .navigationTitle("Loft")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Settings", systemImage: "gear") {
+                            settingsShown.toggle()
+                        }
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Refresh", systemImage: "arrow.clockwise") {
+                            viewModel.fetchStatuses()
+                        }
+                    }
+                }
+                .sheet(isPresented: $settingsShown) {
+                    SettingsView()
+                }
             }
         }
         .tint(SettingsManager.shared.colorAccent)
@@ -73,7 +108,6 @@ struct StatusView: View {
         .padding(.vertical, 4)
     }
 }
-
 
 #Preview {
     ContentView()

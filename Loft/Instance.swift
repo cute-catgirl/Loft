@@ -7,9 +7,10 @@
 
 import Foundation
 
-struct Instance: Identifiable {
+struct Instance: Identifiable, Codable, Hashable, Equatable {
     var id = UUID()
     var name: String
     var admin: String
     var endpointFeed: String
+    var statusFeed: String
 }
