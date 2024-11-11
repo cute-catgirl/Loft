@@ -2,10 +2,11 @@
 //  LoftApp.swift
 //  Loft
 //
-//  Created by Ben on 11/11/24.
+//  Created by Mae on 11/11/24.
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct LoftApp: App {
