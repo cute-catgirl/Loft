@@ -1,0 +1,29 @@
+{
+    "name": "Mae's Apps",
+    "subtitle": "Apps developed by Mae Moon",
+    "apps": [
+        {
+            "name": "Loft",
+            "bundleIdentifier": "name.maemoon.Loft",
+            "developerName": "Mae Moon",
+            "subtitle": "A logiverse client for iOS",
+            "localizedDescription": "A logiverse client for iOS",
+            "iconURL": "",
+            "tintColor": "#FF375E",
+            "category": "social",
+            "versions": [
+                {
+                    "version": "0.1",
+                    "date": "2024-11-12",
+                    "localizedDescription": "First release!",
+                    "downloadURL": "",
+                    "size": 1446043,
+                    "minOSVersion": "18.0",
+                    "maxOSVersion": "18.3"
+                }
+            ],
+            "appPermissions": {}
+        }
+    ],
+    "news": []
+}
