@@ -28,43 +28,62 @@ struct SettingsView: View {
     
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    ColorSetting(selectedColor: $selectedColor)
-                } header: {
-                    Text("Accent Color")
-                }
-                Section {
-                    TextField("Username", text: $username)
-                    SecureField("Password", text: $password)
-                    Picker("Instance", selection: $selectedInstance) {
-                        ForEach(AccountManager.shared.instances.indices, id: \.self) { index in
-                            Text(AccountManager.shared.instances[index].name).tag(index)
+            VStack {
+                Form {
+                    Section {
+                        ColorSetting(selectedColor: $selectedColor)
+                    } header: {
+                        Text("Accent Color")
+                    }
+                    Section {
+                        TextField("Username", text: $username)
+                        SecureField("Password", text: $password)
+                        Picker("Instance", selection: $selectedInstance) {
+                            ForEach(AccountManager.shared.instances.indices, id: \.self) { index in
+                                Text(AccountManager.shared.instances[index].name).tag(index)
+                            }
+                        }
+                        
+                        Button("Save Credentials") {
+                            AccountManager.shared.username = username
+                            AccountManager.shared.password = password
+                            AccountManager.shared.selectedInstance = selectedInstance
+                        }
+                    } header: {
+                        Text("Account")
+                    }
+                    Section("Links") {
+                        Link(destination: URL(string: "https://logiverse.social")!) {
+                            Label("The Logiverse", systemImage: "person.bubble.fill")
+                        }
+                        Link(destination: URL(string: "https://github.com/cute-catgirl/Loft")!) {
+                            Label("Github", systemImage: "text.alignleft")
+                        }
+                        Link(destination: URL(string: "https://ko-fi.com/maemoonowo")!) {
+                            Label("Support me on Ko-fi", systemImage: "heart.fill")
                         }
                     }
-                    
-                    Button("Save Credentials") {
-                        AccountManager.shared.username = username
-                        AccountManager.shared.password = password
-                        AccountManager.shared.selectedInstance = selectedInstance
-                        print("Selected Instance: \(String(describing: selectedInstance))")
-                    }
-                } header: {
-                    Text("Account")
-                }
-            }
-            .sensoryFeedback(.selection, trigger: selectedColor)
-            .navigationTitle("Settings")
-            .toolbar {
-                ToolbarItem {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Done")
+                    Section {
+                        Text("This app is open source and licensed under the GPLv3 license.")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.leading)
+                            .listRowBackground(Color.clear)
                     }
                 }
+                .sensoryFeedback(.selection, trigger: selectedColor)
+                .navigationTitle("Settings")
+                .toolbar {
+                    ToolbarItem {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Text("Done")
+                        }
+                    }
+                }
+                .tint(SettingsManager.shared.colorAccent)
             }
-            .tint(SettingsManager.shared.colorAccent)
         }
     }
 }
