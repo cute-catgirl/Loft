@@ -4,6 +4,7 @@ import Foundation
 struct ContentView: View {
     @StateObject private var viewModel = StatusViewModel()
     @State private var settingsShown: Bool = false
+    @State private var likeAlertShown: Bool = false
     @State private var newStatus: String = ""
     
     var body: some View {
@@ -13,6 +14,14 @@ struct ContentView: View {
                     List {
                         ForEach(viewModel.statuses) { status in
                             StatusView(status: status)
+                                .swipeActions(edge: .trailing) {
+                                    Button {
+                                        likeAlertShown.toggle()
+                                    } label: {
+                                        Label("Like", systemImage: "heart")
+                                            .labelStyle(.iconOnly)
+                                    }
+                                }
                         }
                     }
                     .listStyle(PlainListStyle())
@@ -70,6 +79,9 @@ struct ContentView: View {
                 }
                 .sheet(isPresented: $settingsShown) {
                     SettingsView()
+                }
+                .alert("glad you like it babe", isPresented: $likeAlertShown) {
+                    Button("OK") {}
                 }
             }
         }
