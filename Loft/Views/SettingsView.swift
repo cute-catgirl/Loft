@@ -11,14 +11,9 @@ import SwiftData
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var selectedColor: Color
+    @State private var accountEditorShown: Bool = false
+    @Environment(\.modelContext) private var context
     @Query var accounts: [Account]
-    
-    let instances: [Instance] = [
-        Instance(name: "cute-catgirl.github.io", admin: "Mae", endpointFeed: "https://maemoon-lablogingetusers.web.val.run/", statusFeed: "https://maemoon-labloginupdatestatus.web.val.run"),
-        Instance(name: "todepond.com", admin: "TodePond", endpointFeed: "https://todepond-lablogingetusers.web.val.run", statusFeed: "https://todepond-labloginupdatestatus.web.val.run"),
-        Instance(name: "svenlaa.com", admin: "Svenlaa", endpointFeed: "https://svenlaa-lablogingetusers.web.val.run", statusFeed: "https://svenlaa-labloginupdatestatus.web.val.run"),
-        Instance(name: "evolved.systems", admin: "Evol", endpointFeed: "https://evol-lablogingetusers.web.val.run", statusFeed: "https://evol-labloginupdatestatus.web.val.run")
-    ]
     
     init() {
         self._selectedColor = State(initialValue: SettingsManager.shared.colorAccent)
@@ -35,10 +30,30 @@ struct SettingsView: View {
                     }
                     Section {
                         List(accounts) { account in
-                            Text(account.username)
+                            HStack {
+                                Button {
+                                    for i in 0..<accounts.count {
+                                        if accounts[i].id != account.id && accounts[i].isActive {
+                                            accounts[i].isActive = false
+                                        }
+                                    }
+                                    account.isActive.toggle()
+                                } label: {
+                                    HStack {
+                                        Image(systemName: account.isActive ? "checkmark.circle.fill" : "circle")
+                                            .font(.title2)
+                                        VStack(alignment: .leading) {
+                                            Text("\(account.username)")
+                                            Text(account.instance.name)
+                                                .font(.subheadline)
+                                                .tint(.secondary)
+                                        }
+                                    }
+                                }
+                            }
                         }
                         Button("Add account", systemImage: "plus") {
-                            
+                            accountEditorShown.toggle()
                         }
                     } header: {
                         Text("Accounts")
@@ -77,6 +92,9 @@ struct SettingsView: View {
                             Text("Done")
                         }
                     }
+                }
+                .sheet(isPresented: $accountEditorShown) {
+                    AccountEditor(account: nil)
                 }
                 .tint(SettingsManager.shared.colorAccent)
             }

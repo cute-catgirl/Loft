@@ -12,5 +12,6 @@ struct Instance: Identifiable, Codable, Hashable, Equatable {
     var name: String
     var admin: String
     var endpointFeed: String
-    var statusFeed: String
+    var endpointStatus: String
+    var endpointLogin: String
 }

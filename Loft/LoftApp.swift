@@ -14,5 +14,6 @@ struct LoftApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: Account.self)
     }
 }
