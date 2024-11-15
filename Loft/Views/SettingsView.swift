@@ -6,13 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var selectedColor: Color
-    @State private var username: String = AccountManager.shared.username
-    @State private var password: String = AccountManager.shared.password
-    @State private var selectedInstance: Int = AccountManager.shared.selectedInstance
+    @Query var accounts: [Account]
     
     let instances: [Instance] = [
         Instance(name: "cute-catgirl.github.io", admin: "Mae", endpointFeed: "https://maemoon-lablogingetusers.web.val.run/", statusFeed: "https://maemoon-labloginupdatestatus.web.val.run"),
@@ -23,7 +22,6 @@ struct SettingsView: View {
     
     init() {
         self._selectedColor = State(initialValue: SettingsManager.shared.colorAccent)
-        self._selectedInstance = State(initialValue: AccountManager.shared.selectedInstance)
     }
     
     var body: some View {
@@ -36,21 +34,19 @@ struct SettingsView: View {
                         Text("Accent Color")
                     }
                     Section {
-                        TextField("Username", text: $username)
-                        SecureField("Password", text: $password)
-                        Picker("Instance", selection: $selectedInstance) {
-                            ForEach(AccountManager.shared.instances.indices, id: \.self) { index in
-                                Text(AccountManager.shared.instances[index].name).tag(index)
-                            }
+                        List(accounts) { account in
+                            Text(account.username)
                         }
-                        
-                        Button("Save Credentials") {
-                            AccountManager.shared.username = username
-                            AccountManager.shared.password = password
-                            AccountManager.shared.selectedInstance = selectedInstance
+                        Button("Add account", systemImage: "plus") {
+                            
                         }
                     } header: {
-                        Text("Account")
+                        Text("Accounts")
+                    }
+                    Section("Misc") {
+                        NavigationLink("Changelog") {
+                            ChangelogView()
+                        }
                     }
                     Section("Links") {
                         Link(destination: URL(string: "https://logiverse.social")!) {
@@ -126,4 +122,5 @@ struct ColorSetting: View {
 
 #Preview {
     SettingsView()
+        .modelContainer(for: Account.self, inMemory: true)
 }

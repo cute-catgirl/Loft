@@ -1,11 +1,15 @@
 import SwiftUI
 import Foundation
+import SwiftData
 
 struct ContentView: View {
     @StateObject private var viewModel = StatusViewModel()
     @State private var settingsShown: Bool = false
     @State private var likeAlertShown: Bool = false
     @State private var newStatus: String = ""
+    @Query(filter: #Predicate<Account> { account in
+        account.isActive == true
+    }) var accounts: [Account]
     
     var body: some View {
         NavigationView {
@@ -16,51 +20,63 @@ struct ContentView: View {
                             StatusView(status: status)
                                 .swipeActions(edge: .trailing) {
                                     Button {
+                                        newStatus = "@\(status.username)"
+                                    } label: {
+                                        Label("Reply", systemImage: "arrowshape.turn.up.left")
+                                            .labelStyle(.iconOnly)
+                                    }
+                                    .tint(.blue)
+                                    Button {
                                         likeAlertShown.toggle()
                                     } label: {
                                         Label("Like", systemImage: "heart")
                                             .labelStyle(.iconOnly)
                                     }
+                                    .tint(.red)
                                 }
                         }
                     }
                     .listStyle(PlainListStyle())
+                    .refreshable {
+                        viewModel.fetchStatuses()
+                    }
                     .onAppear {
                         viewModel.fetchStatuses()
                     }
-                    
-                    HStack(spacing: 12) {
-                        TextField("Update status", text: $newStatus)
-                            .padding(12)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(20)
-                        
-                        Button(action: {
-                            if !newStatus.isEmpty {
-                                viewModel.postStatus(
-                                    status: newStatus,
-                                    username: AccountManager.shared.username,
-                                    password: AccountManager.shared.password,
-                                    instance: AccountManager.shared.instances[AccountManager.shared.selectedInstance]
-                                )
-                                newStatus = ""
+                    if (accounts.count >= 1) {
+                        HStack(spacing: 12) {
+                            TextField("Update status", text: $newStatus)
+                                .padding(12)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(10)
+                            
+                            Button(action: {
+                                if !newStatus.isEmpty {
+                                    viewModel.postStatus(
+                                        status: newStatus,
+                                        username: accounts[0].username,
+                                        password: accounts[0].password,
+                                        instance: accounts[0].instance
+                                    )
+                                    newStatus = ""
+                                }
+                            }) {
+                                Image(systemName: "arrow.up.circle.fill")
+                                    .font(.system(size: 32))
+                                    .foregroundColor(!newStatus.isEmpty ? SettingsManager.shared.colorAccent : Color(.systemGray4))
                             }
-                        }) {
-                            Image(systemName: "arrow.up.circle.fill")
-                                .font(.system(size: 32))
-                                .foregroundColor(!newStatus.isEmpty ? SettingsManager.shared.colorAccent : Color(.systemGray4))
+                            .disabled(newStatus.isEmpty)
                         }
-                        .disabled(newStatus.isEmpty)
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                        .background(Color(.systemBackground))
+                        .overlay(
+                            Rectangle()
+                                .frame(height: 1)
+                                .foregroundColor(Color(.systemGray5)),
+                            alignment: .top
+                        )
                     }
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
-                    .background(Color(.systemBackground))
-                    .overlay(
-                        Rectangle()
-                            .frame(height: 1)
-                            .foregroundColor(Color(.systemGray5)),
-                        alignment: .top
-                    )
                 }
                 
                 .navigationTitle("Loft")
@@ -123,4 +139,5 @@ struct StatusView: View {
 
 #Preview {
     ContentView()
+        .modelContainer(for: Account.self, inMemory: true)
 }
