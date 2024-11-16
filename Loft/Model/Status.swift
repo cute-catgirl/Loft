@@ -12,7 +12,7 @@ struct Status: Identifiable {
     let message: String
     let username: String
     let timestamp: String
-    let category: String?
+    let gif: String?
     let isBanned: Bool
     let instance: Instance
     
@@ -20,7 +20,7 @@ struct Status: Identifiable {
         self.message = array[0] as? String ?? ""
         self.username = array[1] as? String ?? ""
         self.timestamp = array[2] as? String ?? ""
-        self.category = array[3] as? String
+        self.gif = array[3] as? String
         self.isBanned = (array[4] as? Int ?? 0) != 0
         self.instance = instance
     }

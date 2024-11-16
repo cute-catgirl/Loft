@@ -107,6 +107,11 @@ struct ContentView: View {
 
 struct StatusView: View {
     let status: Status
+    let gifFrames = [
+        "berd": ["Berd1", "Berd2", "Berd3"],
+        "tode": ["Tode1", "Tode2", "Tode3"],
+        "bot": ["Bot1", "Bot2", "Bot3"]
+    ]
     var body: some View {
         VStack(alignment: .leading) {
             if status.username.count + status.instance.name.count > 30 {
@@ -130,6 +135,10 @@ struct StatusView: View {
             }
             Text(status.message)
                 .font(.title3)
+            if(status.gif != nil) {
+                GifView(frames: gifFrames[status.gif!]!)
+                    .frame(width: 150, height: 150)
+            }
             Text(status.timestamp)
                 .font(.footnote)
         }

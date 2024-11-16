@@ -37,7 +37,7 @@ struct SettingsView: View {
                                             accounts[i].isActive = false
                                         }
                                     }
-                                    account.isActive.toggle()
+                                    account.isActive = true
                                 } label: {
                                     HStack {
                                         Image(systemName: account.isActive ? "checkmark.circle.fill" : "circle")

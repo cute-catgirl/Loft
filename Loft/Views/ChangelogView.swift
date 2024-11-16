@@ -49,8 +49,9 @@ struct ChangelogView: View {
             date: "November 15, 2024",
             changes: [
                 ChangeSection(type: .new, items: [
-                    "Added account switcher",
-                    "Added changelog"
+                    "Account switcher",
+                    "Changelog",
+                    "Gif support"
                 ]),
                 ChangeSection(type: .improved, items: [
                     "You can now scroll up to refresh",
