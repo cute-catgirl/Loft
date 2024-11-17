@@ -46,15 +46,15 @@ struct ChangelogView: View {
     let versions: [Version] = [
         Version(
             number: "1.1",
-            date: "November 15, 2024",
+            date: "November 16, 2024",
             changes: [
                 ChangeSection(type: .new, items: [
                     "Account switcher",
                     "Changelog",
-                    "Gif support"
+                    "GIF support"
                 ]),
                 ChangeSection(type: .improved, items: [
-                    "You can now scroll up to refresh",
+                    "You can now scroll up to refresh"
                 ])
             ]
         ),

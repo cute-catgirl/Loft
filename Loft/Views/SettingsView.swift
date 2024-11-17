@@ -29,28 +29,31 @@ struct SettingsView: View {
                         Text("Accent Color")
                     }
                     Section {
-                        List(accounts) { account in
-                            HStack {
-                                Button {
-                                    for i in 0..<accounts.count {
-                                        if accounts[i].id != account.id && accounts[i].isActive {
-                                            accounts[i].isActive = false
+                        List {
+                            ForEach(accounts) { account in
+                                HStack {
+                                    Button {
+                                        for i in 0..<accounts.count {
+                                            if accounts[i].id != account.id && accounts[i].isActive {
+                                                accounts[i].isActive = false
+                                            }
                                         }
-                                    }
-                                    account.isActive = true
-                                } label: {
-                                    HStack {
-                                        Image(systemName: account.isActive ? "checkmark.circle.fill" : "circle")
-                                            .font(.title2)
-                                        VStack(alignment: .leading) {
-                                            Text("\(account.username)")
-                                            Text(account.instance.name)
-                                                .font(.subheadline)
-                                                .tint(.secondary)
+                                        account.isActive = true
+                                    } label: {
+                                        HStack {
+                                            Image(systemName: account.isActive ? "checkmark.circle.fill" : "circle")
+                                                .font(.title2)
+                                            VStack(alignment: .leading) {
+                                                Text("\(account.username)")
+                                                Text(account.instance.name)
+                                                    .font(.subheadline)
+                                                    .tint(.secondary)
+                                            }
                                         }
                                     }
                                 }
                             }
+                            .onDelete(perform: removeAccounts)
                         }
                         Button("Add account", systemImage: "plus") {
                             accountEditorShown.toggle()
@@ -98,6 +101,12 @@ struct SettingsView: View {
                 }
                 .tint(SettingsManager.shared.colorAccent)
             }
+        }
+    }
+    
+    private func removeAccounts(at indexSet: IndexSet) {
+        for index in indexSet {
+            context.delete(accounts[index])
         }
     }
 }

@@ -46,7 +46,7 @@ class StatusViewModel: ObservableObject {
         }
     }
     
-    func postStatus(status: String, username: String, password: String, instance: Instance) {
+    func postStatus(status: String, username: String, password: String, gif: String?, instance: Instance) {
         print("Posting status to instance: \(instance.name)")
         guard let url = URL(string: instance.endpointStatus) else {
             print("Invalid URL for instance: \(instance.name)")
@@ -57,11 +57,21 @@ class StatusViewModel: ObservableObject {
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let body: [String: Any] = [
-            "status": status,
-            "username": username,
-            "password": password
-        ]
+        let body: [String: Any]
+        if (gif == nil) {
+            body = [
+                "status": status,
+                "username": username,
+                "password": password
+            ]
+        } else {
+            body = [
+                "status": status,
+                "username": username,
+                "password": password,
+                "gif": gif ?? ""
+            ]
+        }
         
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
